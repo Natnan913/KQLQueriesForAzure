@@ -1,4 +1,4 @@
-Total VMs
+// Total VMs
 
 patchassessmentresources //Selects the table patchassessmentresources, where this query will be taking place
 | where type !has 'softwarepatches' //excludes entries dedicated solely to documenting pending OS updates, which would technically be a redundant entry given that the contents of the OS updates are put in as separate entries in this same table
@@ -8,9 +8,9 @@ patchassessmentresources //Selects the table patchassessmentresources, where thi
 | where OS == "Windows"
 | count
 
-comments for this query apply to both proceeding queries below
+// comments for this query apply to both proceeding queries below
 
-VMs pending Security Updates
+// VMs pending Security Updates
 
 
 patchassessmentresources
@@ -22,7 +22,7 @@ patchassessmentresources
 | where OS == "Windows"
 | count
 
-VMs pending Definition Updates
+// VMs pending Definition Updates
 
 
 Patchassessmentresources
