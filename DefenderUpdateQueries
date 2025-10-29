@@ -2,13 +2,15 @@
 
 patchassessmentresources //Selects the table patchassessmentresources, where this query will be taking place
 | where type !has 'softwarepatches' //excludes entries dedicated solely to documenting pending OS updates, which would technically be a redundant entry given that the contents of the OS updates are put in as separate entries in this same table
-| extend prop = parse_json(properties) //parse json is required to separate info about definition and security updates from the attribute "availablePatchCountByClassification" into separate query-able attributes
-| extend updateRollupCount = prop.availablePatchCountByClassification.updateRollup, definitionCount = prop.availablePatchCountByClassification.definition, securityCount = prop.availablePatchCountByClassification.security, OS = prop.osType 
-|where securityCount >= 1
-| where OS == "Windows"
+
+| extend prop = parse_json(properties) //parse json is required to turn info about definition and security updates from the attribute "availablePatchCountByClassification" into separate, query-able attributes
+
+| extend updateRollupCount = prop.availablePatchCountByClassification.updateRollup, definitionCount = prop.availablePatchCountByClassification.definition, securityCount = prop.availablePatchCountByClassification.security
+|where securityCount >= 1 or definitionCount >= 1
 | count
 
-// comments for this query apply to both proceeding queries below
+
+^ comments for this query apply to both proceeding queries below
 
 // VMs pending Security Updates
 
@@ -17,9 +19,8 @@ patchassessmentresources
 | where type !has 'softwarepatches' 
 | extend prop = parse_json(properties)
 | extend lastTime = properties.lastModifiedDateTime
-| extend updateRollupCount = prop.availablePatchCountByClassification.updateRollup, definitionCount = prop.availablePatchCountByClassification.definition, securityCount = prop.availablePatchCountByClassification.security, OS = prop.osType
+| extend updateRollupCount = prop.availablePatchCountByClassification.updateRollup, definitionCount = prop.availablePatchCountByClassification.definition, securityCount = prop.availablePatchCountByClassification.security
 |where securityCount >= 1
-| where OS == "Windows"
 | count
 
 // VMs pending Definition Updates
@@ -29,7 +30,6 @@ Patchassessmentresources
 | where type !has 'softwarepatches'
 | extend prop = parse_json(properties)
 | extend lastTime = properties.lastModifiedDateTime
-| extend updateRollupCount = prop.availablePatchCountByClassification.updateRollup, definitionCount = prop.availablePatchCountByClassification.definition, securityCount = prop.availablePatchCountByClassification.security, OS = prop.osType
+| extend updateRollupCount = prop.availablePatchCountByClassification.updateRollup, definitionCount = prop.availablePatchCountByClassification.definition, securityCount = prop.availablePatchCountByClassification.security
 |where definitionCount >= 1
-| where OS == "Windows"
 | count
